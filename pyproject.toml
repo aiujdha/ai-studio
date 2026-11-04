@@ -1,0 +1,6 @@
+[project]
+name = "ai-studio-scaffold"
+version = "0.1.0"
+description = "Architecture-only scaffold for an AI creation and agent platform"
+requires-python = ">=3.11"
+dependencies = []

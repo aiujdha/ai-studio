@@ -1,0 +1,17 @@
+.env
+.env.*
+*.pem
+*.key
+*.log
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+node_modules/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
