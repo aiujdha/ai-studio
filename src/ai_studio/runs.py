@@ -1,4 +1,4 @@
-"""Lifecycle vocabulary and service contract, not an executing state machine."""
+"""Extended lifecycle contract; runtime.py implements local task execution."""
 
 from dataclasses import dataclass
 from enum import Enum

@@ -1,4 +1,4 @@
-"""Quota lifecycle contract. No balances or accounting entries exist here."""
+"""Quota extension contract; the local ledger is implemented in runtime.py."""
 
 from typing import Protocol
 

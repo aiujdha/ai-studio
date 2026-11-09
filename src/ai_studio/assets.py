@@ -1,4 +1,4 @@
-"""Asset and source-run boundary; no files or object storage are provided."""
+"""Asset extension contract; runtime.py stores local assets in memory."""
 
 from dataclasses import dataclass
 from typing import Protocol

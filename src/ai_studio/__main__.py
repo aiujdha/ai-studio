@@ -1,9 +1,4 @@
-"""Documentation entry point, not an API or Agent runtime."""
-
-
-def main() -> None:
-    print("AI Studio: architecture scaffold only; no models, tools or server started.")
-
+from ai_studio.server import main
 
 if __name__ == "__main__":
     main()

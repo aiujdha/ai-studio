@@ -1,60 +1,50 @@
 # AI Studio
 
-面向图像 / 视频创作与 Agent 工具编排的 **Python 架构展示骨架**，用于说明模块划分和接口边界。
+本地创作任务与工具工作台，包含任务提交、后台执行、状态查看、取消、额度预占与结算，以及结果素材预览。
 
-> 本仓库只有类型、协议接口与入口占位，不生成图片或视频，不运行 Agent、工具或沙箱；不包含企业源码、素材、账号与部署配置。
+## 启动
 
-## 架构
+需要 Python 3.11+，不需要安装第三方运行依赖。在仓库根目录：
 
-```text
-创作页面 / Agent 入口（预留）
-             |
-             v
-       访问权限与额度
-             |
-             v
-       Run 任务生命周期
-             |
-       +-----+-----+
-       |           |
-   模型 Provider  工具接口
-       |           |
-       +-----+-----+
-             |
-       结果资产与来源记录
-```
-
-## 目录与能力对应
-
-| 文件 / 目录 | 展示内容 | 当前状态 |
-| --- | --- | --- |
-| `src/ai_studio/__main__.py` | 程序入口 | 输出说明，不启动服务 |
-| `src/ai_studio/providers.py` | 图像 / 视频模型统一适配 | 类型与接口占位 |
-| `src/ai_studio/tools.py` | 工具描述、发现与执行边界 | 类型与接口占位 |
-| `src/ai_studio/runs.py` | 排队、运行、审批、取消与恢复状态 | 类型与接口占位 |
-| `src/ai_studio/permissions.py` | 管理员角色、用户类型、模块授权 | 类型与接口占位 |
-| `src/ai_studio/credits.py` | 额度预占、结算与释放 | 接口占位 |
-| `src/ai_studio/assets.py` | 结果资产与任务来源关联 | 类型与接口占位 |
-| `web/` | 创作与管理界面边界 | 目录说明 |
-| `deploy/` | API / Worker / Runner 边界 | 目录说明 |
-
-这里只展示与简历能力主题对应的设计位置，不包含真实模型适配器、MCP 服务、任务队列、权限校验、数据库或计费实现；也不表示已完成完整平台的模型与工具接入规模。
-
-## 技术定位
-
-- 骨架使用 Python 3.11+ 标准库，不需要安装依赖。
-- 后续 API 层可使用 FastAPI，前端可使用 Vue 3 / TypeScript。
-- SQLAlchemy、MySQL、Redis/arq、MinIO、MCP 与 Docker/gVisor 属于扩展边界，当前没有集成。
-
-## 查看入口
-
-```bash
+```powershell
 cd src
-python -m ai_studio
+py -m ai_studio
 ```
 
-命令仅打印说明后退出，不发起网络请求、不需要 API Key，也不产生模型费用。
+macOS / Linux 将 py 替换为 python3。打开 http://127.0.0.1:8081 。端口可通过 STUDIO_PORT 环境变量调整。
 
-## 许可
+## 使用
 
-本仓库为独立编写的通用架构骨架，不代表任何企业的正式产品，采用 [MIT License](LICENSE)。
+1. 选择“普通用户”，提交简约海报任务。
+2. 观察 queued → running → completed 状态，以及可用、预占、已消耗额度的变化。
+3. 查看卡片、下载 SVG，或在任务结束前取消以释放预占额度。
+4. 选择文本工具，查看字符统计或英文大写转换结果。
+5. 切换“管理员 / 专业用户”，使用另一个卡片样式，并查看所有用户任务。
+
+图像任务消耗 2 个本地单位，工具任务消耗 1 个单位。每个用户启动时有 100 个单位，失败或取消会释放额度。
+
+## 接口与实现
+
+| 接口 | 用途 |
+| --- | --- |
+| GET /api/catalog | 当前用户可使用的模型与工具 |
+| GET /api/profile | 当前用户与额度 |
+| GET、POST /api/runs | 查看及创建任务 |
+| GET /api/runs/{id} | 任务详情及执行事件 |
+| POST /api/runs/{id}/cancel | 取消未结束任务 |
+| GET /api/assets/{id} | 按任务归属读取素材 |
+
+请求头采用 Bearer 方式传入 local-member-key 或 local-admin-key。页面身份切换只是本机体验入口，不是正式账号登录。服务仅监听 127.0.0.1，请勿作为正式鉴权系统使用。
+
+运行实现位于 src/ai_studio/runtime.py 与 server.py，已有 providers、tools、runs、credits 等协议文件保留扩展边界。当前图像适配器是固定布局的本地 SVG 渲染器，不调用真实生图或视频模型；文本工具为本地确定性函数。没有集成 MCP、代码沙箱、持久化队列或完整 Agent。所有状态和素材保存在内存，重启后清空。
+
+## 检查
+
+从仓库根目录：
+
+```powershell
+cd src
+py -m unittest discover -s ../tests -v
+```
+
+采用 [MIT License](LICENSE)，不包含企业代码、原始素材、账号或内部部署配置。

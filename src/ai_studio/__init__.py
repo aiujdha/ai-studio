@@ -1,1 +1,1 @@
-"""AI Studio architecture scaffold; no business services are implemented."""
+"""Local creation workflow with pluggable provider and tool boundaries."""

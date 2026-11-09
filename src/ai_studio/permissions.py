@@ -13,5 +13,5 @@ class UserContext:
 
 class AccessPolicy(Protocol):
     def require_module_access(self, user: UserContext, module: str) -> None:
-        """An implementation must reject unauthorized access; none is supplied."""
+        """Extension contract; runtime.py checks local model and task access."""
         ...
